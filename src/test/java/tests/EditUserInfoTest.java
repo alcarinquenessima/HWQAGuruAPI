@@ -1,56 +1,75 @@
+package tests;
+
+import models.UserInfoModel;
+import models.UserInfoResponseModel;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
+
+import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
-import static io.restassured.http.ContentType.JSON;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static specs.EditUserSpec.*;
 
-
+@Tag("APITests")
+@Tag("Edit_user_info")
+@DisplayName("Change user info")
 public class EditUserInfoTest extends Testbase{
+    UserInfoModel authData = new UserInfoModel();
+
     @Test
     public void updateFullInfoInDatabaseTest() {
-        String data = "{\"name\": \"Ratty\", \"job\": \"rat\"}";
-        given()
-                .body(data)
-                .contentType(JSON)
-                .log().body()
-                .when()
-                .put("/users/2")
-                .then()
-                .log().status()
-                .log().body()
-                .statusCode(200)
-                .body("name", is("Ratty"))
-                .body("job", is("rat"))
-                .body("updatedAt", startsWith(String.valueOf(LocalDate.now())));
-    }
+        authData.setName("Ratty");
+        authData.setJob("rat");
 
+        UserInfoResponseModel response = step("Change the name and job", () ->
+                given(EditUserRequestSpec)
+                    .body(authData)
+                .when()
+                    .put("/users/2")
+                .then()
+                    .spec(EditUserResponseSpec)
+                    .extract().as(UserInfoResponseModel.class));
+
+        step("Check response", () -> {
+            assertEquals("Ratty", response.getName());
+            assertEquals("rat", response.getJob());
+            assertThat(response.getUpdatedAt(), startsWith(String.valueOf(LocalDate.now())));
+        });
+    }
     @Test
     public void updateNameInDatabaseTest() {
-        String data = "{\"name\": \"Ratty\"}";
-        given()
-                .body(data)
-                .contentType(JSON)
-                .log().body()
+        authData.setName("Ratty");
+
+        UserInfoResponseModel response = step("Change only name", () ->
+                given(EditUserRequestSpec)
+                        .body(authData)
                 .when()
-                .put("/users/2")
+                        .put("/users/2")
                 .then()
-                .log().status()
-                .log().body()
-                .statusCode(200)
-                .body("name", is("Ratty"))
-                .body("job", nullValue())
-                .body("updatedAt", startsWith(String.valueOf(LocalDate.now())));
+                        .spec(EditUserResponseSpec)
+                        .extract().as(UserInfoResponseModel.class));
+
+        step("Check response", () -> {
+            assertEquals("Ratty", response.getName());
+            assertThat(response.getJob(), nullValue());
+            assertThat(response.getUpdatedAt(), startsWith(String.valueOf(LocalDate.now())));
+        });
     }
     @Test
     public void deleteUserTest() {
-        given()
-                .log().body()
-                .when()
-                .delete("/users/2")
-                .then()
-                .log().status()
-                .log().body()
-                .statusCode(204);
+        step("Delete user", () -> {
+            given(EditUserRequestSpec)
+            .when()
+                    .delete("/users/2")
+            .then()
+                    .spec(EditUserResponseSpec2);
+        });
     }
 
 }
