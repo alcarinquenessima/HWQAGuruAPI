@@ -23,7 +23,6 @@ public class ResponseRequestSpecs {
                 .build();
     }
 
-    // Спецификации для ответов с разными статус-кодами
     public static ResponseSpecification responseSpec200 = createResponseSpec(200);
     public static ResponseSpecification responseSpec204 = createResponseSpec(204);
     public static ResponseSpecification responseSpec400 = createResponseSpec(400);
