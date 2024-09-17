@@ -19,7 +19,7 @@ import static specs.EditUserSpec.*;
 @Tag("APITests")
 @Tag("Edit_user_info")
 @DisplayName("Change user info")
-public class EditUserInfoTest extends Testbase{
+public class EditUserInfoTest extends TestBase {
     UserInfoModel authData = new UserInfoModel();
 
     @Test
@@ -28,13 +28,13 @@ public class EditUserInfoTest extends Testbase{
         authData.setJob("rat");
 
         UserInfoResponseModel response = step("Change the name and job", () ->
-                given(EditUserRequestSpec)
-                    .body(authData)
-                .when()
-                    .put("/users/2")
-                .then()
-                    .spec(EditUserResponseSpec)
-                    .extract().as(UserInfoResponseModel.class));
+                given(requestSpec)
+                        .body(authData)
+                        .when()
+                        .put("/users/2")
+                        .then()
+                        .spec(responseSpec200)
+                        .extract().as(UserInfoResponseModel.class));
 
         step("Check response", () -> {
             assertEquals("Ratty", response.getName());
@@ -42,17 +42,18 @@ public class EditUserInfoTest extends Testbase{
             assertThat(response.getUpdatedAt(), startsWith(String.valueOf(LocalDate.now())));
         });
     }
+
     @Test
     public void updateNameInDatabaseTest() {
         authData.setName("Ratty");
 
         UserInfoResponseModel response = step("Change only name", () ->
-                given(EditUserRequestSpec)
+                given(requestSpec)
                         .body(authData)
-                .when()
+                        .when()
                         .put("/users/2")
-                .then()
-                        .spec(EditUserResponseSpec)
+                        .then()
+                        .spec(responseSpec200)
                         .extract().as(UserInfoResponseModel.class));
 
         step("Check response", () -> {
@@ -61,14 +62,15 @@ public class EditUserInfoTest extends Testbase{
             assertThat(response.getUpdatedAt(), startsWith(String.valueOf(LocalDate.now())));
         });
     }
+
     @Test
     public void deleteUserTest() {
         step("Delete user", () -> {
-            given(EditUserRequestSpec)
-            .when()
+            given(requestSpec)
+                    .when()
                     .delete("/users/2")
-            .then()
-                    .spec(EditUserResponseSpec2);
+                    .then()
+                    .spec(editUserResponseSpec2);
         });
     }
 
