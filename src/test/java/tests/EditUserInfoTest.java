@@ -14,7 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static specs.EditUserSpec.*;
+import static specs.ResponseRequestSpecs.*;
 
 @Tag("APITests")
 @Tag("Edit_user_info")
@@ -70,7 +70,7 @@ public class EditUserInfoTest extends TestBase {
                     .when()
                     .delete("/users/2")
                     .then()
-                    .spec(editUserResponseSpec2);
+                    .spec(responseSpec204);
         });
     }
 

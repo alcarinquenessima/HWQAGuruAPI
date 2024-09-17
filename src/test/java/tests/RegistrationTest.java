@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static specs.EditUserSpec.*;
+import static specs.ResponseRequestSpecs.*;
 
 @Tag("APITests")
 @Tag("Registration_tests")
@@ -47,7 +47,7 @@ public class RegistrationTest extends TestBase {
                         .when()
                         .post("/register")
                         .then()
-                        .spec(registrationResponseSpec400)
+                        .spec(responseSpec400)
                         .extract().as(RegistrationResponseModel.class));
 
         step("Check response", () ->
@@ -64,7 +64,7 @@ public class RegistrationTest extends TestBase {
                         .when()
                         .post("/register")
                         .then()
-                        .spec(registrationResponseSpec400)
+                        .spec(responseSpec400)
                         .extract().as(RegistrationResponseModel.class));
 
         step("Check response", () ->
